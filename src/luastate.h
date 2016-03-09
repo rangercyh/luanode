@@ -36,9 +36,7 @@ private:
 
     static void DoFile(const v8::FunctionCallbackInfo<v8::Value>& args);
     static void DoString(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static void CallFunction(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    // static v8::Persistent<v8::Function> constructor;
     lua_State* lua_;
     char* name_;
 };

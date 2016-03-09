@@ -24,7 +24,6 @@ void LuaState::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "collectGarbage", CollectGarbage);
     NODE_SET_PROTOTYPE_METHOD(tpl, "doFile", DoFile);
     NODE_SET_PROTOTYPE_METHOD(tpl, "doString", DoString);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "call", CallFunction);
 
     exports->Set(String::NewFromUtf8(isolate, "LuaState"), tpl->GetFunction());
 }
@@ -134,37 +133,6 @@ void LuaState::DoString(const FunctionCallbackInfo<Value>& args) {
     } else {
         args.GetReturnValue().SetUndefined();
     }
-}
-
-void LuaState::CallFunction(const FunctionCallbackInfo<Value>& args) {
-    Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
-
-    if (args.Length() < 1) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,
-            "LuaState.CallFunction Requires At Least 1 Arguments")));
-        args.GetReturnValue().SetUndefined();
-        return;
-    }
-
-    char* fname = get_lua_str(args[0]);
-
-    LuaState* obj = ObjectWrap::Unwrap<LuaState>(args.This());
-    lua_getglobal(obj->lua_, fname);
-
-    int argnum = 0;
-    for (int i = 1; i < args.Length(); ++i, ++argnum) {
-        push_js_value_to_lua(obj->lua_, args[i]);
-    }
-
-    if (lua_pcall(obj->lua_, argnum, 1, 0) != 0) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,
-            "LuaState.CallFunction error")));
-        args.GetReturnValue().SetUndefined();
-        return;
-    }
-
-    args.GetReturnValue().Set(lua_to_js_value(obj->lua_, -1));
 }
 
 void LuaState::SetGlobal(const FunctionCallbackInfo<Value>& args) {
