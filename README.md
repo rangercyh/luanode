@@ -8,3 +8,7 @@ this code is used for node 0.12.x
 so just use it!
 
 if you find any question, welcome to submit pullrequest :)
+Licence
+=====
+
+[WTFPL](http://en.wikipedia.org/wiki/WTFPL) 
